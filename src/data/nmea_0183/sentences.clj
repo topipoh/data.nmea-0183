@@ -37,9 +37,13 @@
   "Parse sentence by sentence id keyword. Takes the sentence id and collection of field values."
   (fn [sentence-kw field-values] sentence-kw))
 
-(defmethod parse-sentence ::gsa
+(defmethod parse-sentence "GSA"
   [_ values]
-  (parse values
-         ::f/faa-mode
-         ::f/fix-status
-         [12 ::f/satellite-id ::f/satellite-ids (complement str/blank?)]))
+  {::gsa
+   (parse values
+          ::f/faa-mode
+          ::f/fix-status
+          [12 ::f/satellite-id ::f/satellite-ids (complement str/blank?)]
+          ::f/position-dop
+          ::f/horizontal-dop
+          ::f/vertical-dop)})
