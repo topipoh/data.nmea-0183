@@ -39,7 +39,7 @@
 (s/def ::longitude ::t/longitude)
 (s/def ::lat-hemisphere ::t/hemisphere)
 (s/def ::lon-hemisphere ::t/hemisphere)
-(s/def ::fix-qualitty ::t/gps-fix-quality)
+(s/def ::fix-quality ::t/gps-fix-quality)
 (s/def ::satellites-in-use ::t/integer)
 (s/def ::horizontal-dilution ::t/double)
 (s/def ::altitude ::t/double)
