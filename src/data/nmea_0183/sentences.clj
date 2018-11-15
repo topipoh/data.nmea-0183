@@ -37,7 +37,8 @@
                                     (nth f 2)
                                     f))]))
      (defmethod parse-sentence ~id [_# values#]
-       {~kw (parse values# ~@field-parse-defs)})))
+       {::type ~kw
+        ~kw (parse values# ~@field-parse-defs)})))
 
 (defmulti parse-sentence
   "Parse sentence by sentence id keyword. Takes the sentence id and collection of field values."
@@ -78,6 +79,16 @@
 (define-sentence "ZDA" ::zda
   ::f/time ::f/day ::f/month ::f/year
   ::f/local-zone-hours ::f/local-zone-minutes)
+
+(define-sentence "RMC" ::rmc
+  ::f/time ::f/data-status
+  ::f/latitude ::f/lat-hemisphere
+  ::f/longitude ::f/lon-hemisphere
+  ::f/speed-knots
+  ::f/course
+  ::f/date
+  ::f/magnetic-variation
+  ::f/variation-hemisphere)
 
 ;; GSV - satellites in view
 ;; GNS - ?

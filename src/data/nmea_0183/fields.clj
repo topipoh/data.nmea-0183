@@ -53,6 +53,12 @@
 (s/def ::rate-of-turn ::t/double)
 (s/def ::data-status ::t/data-status)
 
+(s/def ::course ::t/double)
+
+(s/def ::date ::t/date)
+(s/def ::magnetic-variation ::t/double)
+(s/def ::variation-hemisphere ::t/hemisphere)
+
 (defn parse-field [field-kw ascii-value]
   (let [spec (s/get-spec field-kw)]
     (when-not spec

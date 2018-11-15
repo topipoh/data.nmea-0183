@@ -19,6 +19,8 @@
 
 (s/def ::utc-time (s/keys :req [::hours ::minutes ::seconds]))
 
+(s/def ::date #(instance? java.time.LocalDate %))
+
 ;; Define a multi method to parse different field types from ascii
 
 (defmulti from-ascii
@@ -108,3 +110,9 @@
   (case value
     "A" :active
     "V" :void))
+
+(defmethod from-ascii ::date [_ value]
+  (let [dd (Integer/parseInt (subs value 0 2))
+        mm (Integer/parseInt (subs value 2 4))
+        yy (Integer/parseInt (subs value 4))]
+    (java.time.LocalDate/of (+ 2000 yy) mm dd)))

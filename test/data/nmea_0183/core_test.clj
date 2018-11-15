@@ -3,7 +3,8 @@
             [clojure.test :as t :refer [deftest is testing]]
             [data.nmea-0183.input :as input]
             [data.nmea-0183.fields :as f]
-            [data.nmea-0183.sentences :as sentences]))
+            [data.nmea-0183.sentences :as sentences]
+            [clojure.java.io :as io]))
 
 (defn- input [msg-str]
   (input/input-stream (java.io.ByteArrayInputStream.
@@ -21,3 +22,11 @@
     (is (= 1.72 position-dop))
     (is (= 1.03 horizontal-dop))
     (is (= 1.38 vertical-dop))))
+
+(deftest parse-oulu-nmea
+  (testing "Parse generated GPS log data"
+    (let [in (input/input-stream (io/input-stream (io/resource "resources/oulu.nmea")))
+          msgs (doall (repeatedly 60 #(sut/parse in)))]
+      ;; check only that the messages are parsed correctly
+      ;; FIXME: could add more validation
+      (is msgs))))
