@@ -67,7 +67,7 @@
   ::f/fix-quality
   ::f/satellites-in-use
   ::f/horizontal-dilution
-  ::f/altitude ::f/altitude-unit
+  ::f/altitude ::f/altitude-units
   ::f/geoidal-height ::f/height-units
   ::f/dgps-age ::f/dgps-station-id)
 
