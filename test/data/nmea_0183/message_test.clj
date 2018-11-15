@@ -12,6 +12,7 @@
           msgs (repeatedly 12 #(msg/read-message in-fn))
           by-sentence (group-by :sentence msgs)]
 
+      (println (first msgs))
       (is (every? #(= "GP" (:talker %)) msgs))
 
       (is (= 2

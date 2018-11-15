@@ -5,10 +5,19 @@
 ;; Define data types
 (s/def ::double double?)
 (s/def ::string string?)
+(s/def ::integer integer?)
 
 (s/def ::faa-mode #{:automatic :manual :dgps :estimated :precise :simulated :none})
 (s/def ::gps-fix-status #{:na :2d :3d})
 (s/def ::gps-fix-quality #{:invalid :normal :dgps :pps :rtk :frtk :estimated :manual :simulated})
+
+(s/def ::boolean boolean?)
+
+(s/def ::hours integer?)
+(s/def ::minutes integer?)
+(s/def ::seconds double?)
+
+(s/def ::utc-time (s/keys :req [::hours ::minutes ::seconds]))
 
 ;; Define a multi method to parse different field types from ascii
 
@@ -20,6 +29,11 @@
   (Double/parseDouble d))
 
 (defmethod from-ascii ::string [_ s] s)
+
+(defmethod from-ascii ::boolean [_ b]
+  (case b
+    "T" true
+    "F" false))
 
 (defmethod from-ascii ::faa-mode [_ mode]
   (case mode
@@ -49,11 +63,48 @@
     "7" :manual
     "8" :simulated))
 
+(defmethod from-ascii ::utc-time [_ value]
+  {::hours (Integer/parseInt (subs value 0 2))
+   ::minutes (Integer/parseInt (subs value 2 4))
+   ::seconds (Double/parseDouble (subs value 4))})
 
-;; Define named fields
+(s/def ::latitude double?)
 
-(s/def ::position-dop ::double)
-(s/def ::vertical-dop ::double)
+(defn- parse-degree [integer-part-len value]
+  (let [deg (Integer/parseInt (subs value 0 integer-part-len))
+        min (Double/parseDouble (subs value integer-part-len))]
+    (+ deg (/ min 60))))
 
-(defn parse-field [field-kw ascii-value]
-  (from-ascii (s/get-spec field-kw) ascii-value))
+(defmethod from-ascii ::latitude [_ value]
+  (parse-degree 2 value))
+
+(s/def ::longitude double?)
+
+(defmethod from-ascii ::longitude [_ value]
+  (parse-degree 3 value))
+
+(s/def ::hemisphere #{:north :south :west :east})
+
+(defmethod from-ascii ::hemisphere [_ value]
+  (case value
+    "N" :north
+    "S" :south
+    "W" :west
+    "E" :east))
+
+(defmethod from-ascii ::integer [_ value]
+  (Integer/parseInt value))
+
+(s/def ::units #{:meters :feet})
+
+(defmethod from-ascii ::units [_ value]
+  (case value
+    "F" :feet
+    "M" :meters))
+
+(s/def ::data-status #{:active :void})
+
+(defmethod from-ascii ::data-status [_ value]
+  (case value
+    "A" :active
+    "V" :void))
