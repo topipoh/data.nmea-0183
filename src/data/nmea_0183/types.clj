@@ -1,7 +1,6 @@
 (ns data.nmea-0183.types
   "Defines NMEA 0183 date types and their parsing from ASCII."
-  (:require [clojure.spec.alpha :as s]
-            [clojure.string :as str]))
+  (:require [clojure.spec.alpha :as s]))
 
 ;; Define data types
 (s/def ::double double?)
@@ -27,8 +26,7 @@
   (fn [type ascii-value] type))
 
 (defmethod from-ascii ::double [_ d]
-  (when-not (str/blank? d)
-    (Double/parseDouble d)))
+  (Double/parseDouble d))
 
 (defmethod from-ascii ::string [_ s] s)
 

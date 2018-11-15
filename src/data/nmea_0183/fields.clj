@@ -2,7 +2,8 @@
   "Defines NMEA 0183 fields."
   (:require [clojure.spec.alpha :as s]
             [data.nmea-0183.types :as t]
-            [data.nmea-0183.fields :as f]))
+            [data.nmea-0183.fields :as f]
+            [clojure.string :as str]))
 
 
 (s/def ::position-dop ::t/double)
@@ -53,4 +54,9 @@
 (s/def ::data-status ::t/data-status)
 
 (defn parse-field [field-kw ascii-value]
-  (t/from-ascii (s/get-spec field-kw) ascii-value))
+  (let [spec (s/get-spec field-kw)]
+    (when-not spec
+      (throw (ex-info "Missing spec for field, this is a bug."
+                      {:field-kw field-kw})))
+    (when-not (str/blank? ascii-value)
+      (t/from-ascii spec ascii-value))))
