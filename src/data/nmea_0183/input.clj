@@ -4,7 +4,7 @@
   The message reader takes an input source that is a function.
   The function must return successive characters from the source when called with 0 arguments.
   The function must support pushback of 1 character when called with 1 argument."
-  (:import (java.io InputStream)))
+  (:import (java.io InputStream EOFException)))
 
 (set! *warn-on-reflection* true)
 
@@ -22,6 +22,10 @@
 
 
 (defn input-stream
-  "Returns an input stream source. Does not close input stream."
+  "Returns an input stream source. Closes input if end of stream is reached."
   [^InputStream in]
-  (pushback-fn #(char (.read in))))
+  (pushback-fn #(let [b (.read in)]
+                  (if (= -1 b)
+                    (do (.close in)
+                        (throw (EOFException.)))
+                    (char (.read in))))))
