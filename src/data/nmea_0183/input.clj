@@ -32,4 +32,4 @@
                   (if (= -1 b)
                     (do (try-close in)
                         (throw (EOFException.)))
-                    (char (.read in))))))
+                    (char b)))))
