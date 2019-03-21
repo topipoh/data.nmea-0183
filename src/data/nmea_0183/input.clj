@@ -20,12 +20,16 @@
        ([pushback-val]
         (vreset! pushback pushback-val)))))
 
+(defn- try-close [^InputStream in]
+  (try
+    (.close in)
+    (catch Exception e)))
 
 (defn input-stream
   "Returns an input stream source. Closes input if end of stream is reached."
   [^InputStream in]
   (pushback-fn #(let [b (.read in)]
                   (if (= -1 b)
-                    (do (.close in)
+                    (do (try-close in)
                         (throw (EOFException.)))
                     (char (.read in))))))
