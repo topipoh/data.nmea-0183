@@ -26,10 +26,30 @@
     (catch Exception e)))
 
 (defn input-stream
-  "Returns an input stream source. Closes input if end of stream is reached."
-  [^InputStream in]
-  (pushback-fn #(let [b (.read in)]
-                  (if (= -1 b)
-                    (do (try-close in)
-                        (throw (EOFException.)))
-                    (char b)))))
+  "Returns an input stream source.
+
+  If :throw-on-eof? option is true (default) closes input if end of
+  stream is reached and throws EOFException.
+
+  If :throw-on-eof? is false, the :eof-value (default nil) is returned.
+
+  If :trace-fn function is given, all read input is echoed to the
+  given function as int value."
+
+  ([^InputStream in]
+   (input-stream in {}))
+  ([^InputStream in opts]
+   (let [opts (merge {:throw-on-eof? true
+                      :eof-value nil
+                      :trace-fn nil}
+                     opts)
+         {:keys [throw-on-eof? eof-value trace-fn]} opts]
+     (pushback-fn #(let [b (.read in)]
+                     (when trace-fn
+                       (trace-fn b))
+                     (if (= -1 b)
+                       (if throw-on-eof?
+                         (do (try-close in)
+                             (throw (EOFException.)))
+                         eof-value)
+                       (char b)))))))
