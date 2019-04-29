@@ -1,7 +1,6 @@
 (ns data.nmea-0183.types
   "Defines NMEA 0183 date types and their parsing from ASCII."
-  (:require [clojure.spec.alpha :as s]
-            [clojure.string :as str]))
+  (:require [clojure.spec.alpha :as s]))
 
 ;; Define data types
 (s/def ::double double?)
@@ -20,6 +19,8 @@
 
 (s/def ::utc-time (s/keys :req [::hours ::minutes ::seconds]))
 
+(s/def ::date #(instance? java.time.LocalDate %))
+
 ;; Define a multi method to parse different field types from ascii
 
 (defmulti from-ascii
@@ -27,8 +28,7 @@
   (fn [type ascii-value] type))
 
 (defmethod from-ascii ::double [_ d]
-  (when-not (str/blank? d)
-    (Double/parseDouble d)))
+  (Double/parseDouble d))
 
 (defmethod from-ascii ::string [_ s] s)
 
@@ -110,3 +110,9 @@
   (case value
     "A" :active
     "V" :void))
+
+(defmethod from-ascii ::date [_ value]
+  (let [dd (Integer/parseInt (subs value 0 2))
+        mm (Integer/parseInt (subs value 2 4))
+        yy (Integer/parseInt (subs value 4))]
+    (java.time.LocalDate/of (+ 2000 yy) mm dd)))
