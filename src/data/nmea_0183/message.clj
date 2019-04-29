@@ -84,7 +84,7 @@
               (= :cr control)
               (do
                 (in-fn ch)
-                (read-end)
+                (read-end in-fn)
                 (finalize-msg msg))
 
               ;; Field delimiter, start a new field

@@ -9,7 +9,7 @@
 (deftest sample-file-messages
   (with-open [in (io/input-stream "file:test/resources/test-messages.txt")]
     (let [in-fn (input/input-stream in)
-          msgs (repeatedly 14 #(msg/read-message in-fn))
+          msgs (repeatedly 15 #(msg/read-message in-fn))
           by-sentence (group-by :sentence msgs)]
 
       (println (first msgs))
@@ -20,7 +20,7 @@
              (count (by-sentence "GSA"))
              (count (by-sentence "RMC"))
              (count (by-sentence "RRE"))))
-      (is (= 6 (count (by-sentence "GSV")))))))
+      (is (= 7 (count (by-sentence "GSV")))))))
 
 (defn- msg [string]
   (msg/read-message
